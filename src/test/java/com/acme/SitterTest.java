@@ -116,8 +116,8 @@ public class SitterTest {
 
 	@Test
 	public void whenCalculateChargeIsPassedIntervalSpanningDaylightSavingsSpringReturns1600() {
-		final DateTime startTime = new DateTime(2015, 3, 8, 2, 10, 00, DateTimeZone.forID("US/Eastern"));
-		final DateTime endTime = new DateTime(2015, 3, 8, 4, 0, 0, DateTimeZone.forID("US/Eastern"));
+		final DateTime startTime = new DateTime(2015, 3, 8, 1, 10, 00, DateTimeZone.forID("US/Eastern"));
+		final DateTime endTime = new DateTime(2015, 3, 8, 3, 0, 0, DateTimeZone.forID("US/Eastern"));
 
 		final Integer charge = sitter.calculateCharge(new Interval(startTime, endTime));
 

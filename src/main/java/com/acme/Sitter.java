@@ -1,6 +1,7 @@
 package com.acme;
 
 import org.joda.time.Duration;
+import org.joda.time.Hours;
 import org.joda.time.Interval;
 import org.joda.time.MutableDateTime;
 
@@ -40,7 +41,7 @@ public class Sitter {
 			return 0;
 		}
 
-		final int hours = new Interval(mutableStartDateTime, mutableEndDateTime).toPeriod().getHours();
+		final int hours = Hours.hoursBetween(mutableStartDateTime, mutableEndDateTime).getHours();
 		return hours * 1600;
 	}
 
@@ -76,7 +77,7 @@ public class Sitter {
 		if (interval.toDuration().isLongerThan(Duration.standardHours(13))) {
 			throw new IllegalArgumentException("An interval must be less than one day");
 		}
-		if (interval.getStart().getHourOfDay() < 17) {
+		if (interval.getStart().getHourOfDay() > 4 && interval.getStart().getHourOfDay() < 17) {
 			throw new IllegalArgumentException("Start Time must be after 5PM");
 		}
 		if (interval.getEnd().getHourOfDay() > 4 && interval.getEnd().getHourOfDay() < 17) {
