@@ -2,6 +2,7 @@ package com.acme;
 
 import org.joda.time.Duration;
 import org.joda.time.Interval;
+import org.joda.time.MutableDateTime;
 
 public class Sitter {
 
@@ -24,7 +25,23 @@ public class Sitter {
 	}
 
 	private int calculateChargeAfterMidnight(final Interval interval) {
-		return 0;
+
+		final MutableDateTime mutableStartDateTime = new MutableDateTime(interval.getStart());
+
+		if (mutableStartDateTime.getHourOfDay() > 17) {
+			mutableStartDateTime.addHours(23 - mutableStartDateTime.getHourOfDay());
+		}
+		final MutableDateTime mutableEndDateTime = new MutableDateTime(interval.getEnd());
+		if (interval.getEnd().getMinuteOfHour() > 0 || interval.getEnd().getSecondOfMinute() > 0) {
+			mutableEndDateTime.addHours(1);
+		}
+		if (mutableEndDateTime.getHourOfDay() > 4 && mutableEndDateTime.getHourOfDay() < 23) {
+			// there are no hours after midnight
+			return 0;
+		}
+
+		final int hours = new Interval(mutableStartDateTime, mutableEndDateTime).toPeriod().getHours();
+		return hours * 1600;
 	}
 
 	private int calculateChargeToMidnight(final Interval interval) {
@@ -37,9 +54,9 @@ public class Sitter {
 		if (interval.getEnd().getMinuteOfHour() > 0 || interval.getEnd().getSecondOfMinute() > 0) {
 			endHour++;
 		}
-		if (endHour <= 4) {
+		if (endHour <= 4 || endHour > 23) {
 			// we ended after midnight
-			endHour = 24;
+			endHour = 23;
 		}
 		int chargeTotal = 0;
 		for (int currentHour = startHour; currentHour < endHour; currentHour++) {
