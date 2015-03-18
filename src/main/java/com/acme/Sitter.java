@@ -79,8 +79,13 @@ public class Sitter {
 		if (interval.getStart().getHourOfDay() < 17) {
 			throw new IllegalArgumentException("Start Time must be after 5PM");
 		}
-		if (interval.getStart().getHourOfDay() > 4 && interval.getStart().getHourOfDay() < 17) {
+		if (interval.getEnd().getHourOfDay() > 4 && interval.getEnd().getHourOfDay() < 17) {
 			throw new IllegalArgumentException("End Time must be before 4AM");
+		}
+		if (interval.getEnd().getHourOfDay() == 4) {
+			if (interval.getEnd().getMinuteOfHour() > 0 || interval.getEnd().getSecondOfMinute() > 0) {
+				throw new IllegalArgumentException("End Time must be before 4AM");
+			}
 		}
 	}
 }
