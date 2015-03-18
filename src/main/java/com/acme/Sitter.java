@@ -16,17 +16,53 @@ public class Sitter {
 	 */
 	public Integer calculateCharge(final Interval interval) throws IllegalArgumentException {
 		validateInterval(interval);
-		return null;
+		int chargeTotal = 0;
+		chargeTotal += calculateChargeToMidnight(interval);
+		chargeTotal += calculateChargeAfterMidnight(interval);
+
+		return chargeTotal;
+	}
+
+	private int calculateChargeAfterMidnight(final Interval interval) {
+		return 0;
+	}
+
+	private int calculateChargeToMidnight(final Interval interval) {
+		final int startHour = interval.getStart().getHourOfDay();
+		if (startHour < 15) {
+			// we started aftermidnight
+			return 0;
+		}
+		int endHour = interval.getEnd().getHourOfDay();
+		if (interval.getEnd().getMinuteOfHour() > 0 || interval.getEnd().getSecondOfMinute() > 0) {
+			endHour++;
+		}
+		if (endHour <= 4) {
+			// we ended after midnight
+			endHour = 24;
+		}
+		int chargeTotal = 0;
+		for (int currentHour = startHour; currentHour < endHour; currentHour++) {
+			if (currentHour < BEDTIME_HOUR) {
+				chargeTotal += 1200;
+			} else {
+				chargeTotal += 800;
+			}
+		}
+		return chargeTotal;
 	}
 
 	private void validateInterval(final Interval interval) {
 		if (interval == null) {
 			throw new IllegalArgumentException("An interval is required");
 		}
+		if (interval.toDuration().isLongerThan(Duration.standardHours(13))) {
+			throw new IllegalArgumentException("An interval must be less than one day");
+		}
 		if (interval.getStart().getHourOfDay() < 17) {
 			throw new IllegalArgumentException("Start Time must be after 5PM");
 		}
-		if (new Duration(interval.getEnd().getMillisOfDay()).isLongerThan(Duration.standardHours(4L))) {
+		if (interval.getStart().getHourOfDay() > 4 && interval.getStart().getHourOfDay() < 17) {
 			throw new IllegalArgumentException("End Time must be before 4AM");
 		}
 	}

@@ -45,6 +45,16 @@ public class SitterTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
+	public void whenCalculateChargeIntervalIsMoreThanADayThrowException() {
+		final DateTime startTime = new DateTime(2015, 1, 1, 18, 0, 0, DateTimeZone.forID("US/Eastern"));
+		final DateTime endTime = new DateTime(2015, 1, 2, 18, 1, 1, DateTimeZone.forID("US/Eastern"));
+
+		sitter.calculateCharge(new Interval(startTime, endTime));
+
+		fail("Should have seen IllegalArgumentException");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
 	public void whenCalculateChargeIntervalStartsBeforeEarilestTimeThrowException() {
 		final DateTime startTime = new DateTime(2015, 1, 1, 16, 59, 59, DateTimeZone.forID("US/Eastern"));
 		final DateTime endTime = new DateTime(2015, 1, 1, 18, 00, 00, DateTimeZone.forID("US/Eastern"));
@@ -54,16 +64,8 @@ public class SitterTest {
 		fail("Should have seen IllegalArgumentException");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void whenCalculateChargeIsPassedNullIntervalThrowException() {
-
-		sitter.calculateCharge(null);
-
-		fail("Should have seen IllegalArgumentException");
-	}
-
 	@Test
-	public void whenCalculateIsPassedIntervalOfPartialHourAfterBedtimeReturns800() {
+	public void whenCalculateChargeIsPassedIntervalOfPartialHourAfterBedtimeReturns800() {
 		final DateTime startTime = new DateTime(2015, 1, 1, Sitter.BEDTIME_HOUR, 10, 00, DateTimeZone.forID("US/Eastern"));
 		final DateTime endTime = new DateTime(2015, 1, 1, Sitter.BEDTIME_HOUR, 45, 59, DateTimeZone.forID("US/Eastern"));
 
@@ -73,7 +75,7 @@ public class SitterTest {
 	}
 
 	@Test
-	public void whenCalculateIsPassedIntervalOfPartialHourAfterMidnightReturns1600() {
+	public void whenCalculateChargeIsPassedIntervalOfPartialHourAfterMidnightReturns1600() {
 		final DateTime startTime = new DateTime(2015, 1, 1, 12, 10, 00, DateTimeZone.forID("US/Eastern"));
 		final DateTime endTime = new DateTime(2015, 1, 1, 12, 45, 59, DateTimeZone.forID("US/Eastern"));
 
@@ -83,7 +85,7 @@ public class SitterTest {
 	}
 
 	@Test
-	public void whenCalculateIsPassedIntervalOfPartialHourBeforeBedtimeReturns1200() {
+	public void whenCalculateChargeIsPassedIntervalOfPartialHourBeforeBedtimeReturns1200() {
 		final DateTime startTime = new DateTime(2015, 1, 1, 17, 10, 00, DateTimeZone.forID("US/Eastern"));
 		final DateTime endTime = new DateTime(2015, 1, 1, 17, 45, 59, DateTimeZone.forID("US/Eastern"));
 
@@ -93,7 +95,7 @@ public class SitterTest {
 	}
 
 	@Test
-	public void whenCalculateIsPassedIntervalSpanningBedtimeBoundryReturns2000() {
+	public void whenCalculateChargeIsPassedIntervalSpanningBedtimeBoundryReturns2000() {
 		final DateTime startTime = new DateTime(2015, 1, 1, Sitter.BEDTIME_HOUR - 1, 10, 00, DateTimeZone.forID("US/Eastern"));
 		final DateTime endTime = new DateTime(2015, 1, 1, Sitter.BEDTIME_HOUR, 45, 59, DateTimeZone.forID("US/Eastern"));
 
@@ -103,7 +105,7 @@ public class SitterTest {
 	}
 
 	@Test
-	public void whenCalculateIsPassedIntervalSpanningDaylightSavingsFallReturns4800() {
+	public void whenCalculateChargeIsPassedIntervalSpanningDaylightSavingsFallReturns4800() {
 		final DateTime startTime = new DateTime(2015, 11, 1, 2, 10, 00, DateTimeZone.forID("US/Eastern"));
 		final DateTime endTime = new DateTime(2015, 11, 1, 4, 0, 0, DateTimeZone.forID("US/Eastern"));
 
@@ -113,7 +115,7 @@ public class SitterTest {
 	}
 
 	@Test
-	public void whenCalculateIsPassedIntervalSpanningDaylightSavingsSpringReturns1600() {
+	public void whenCalculateChargeIsPassedIntervalSpanningDaylightSavingsSpringReturns1600() {
 		final DateTime startTime = new DateTime(2015, 3, 8, 2, 10, 00, DateTimeZone.forID("US/Eastern"));
 		final DateTime endTime = new DateTime(2015, 3, 8, 4, 0, 0, DateTimeZone.forID("US/Eastern"));
 
@@ -123,9 +125,9 @@ public class SitterTest {
 	}
 
 	@Test
-	public void whenCalculateIsPassedIntervalSpanningMidnightBoundryReturns2400() {
+	public void whenCalculateChargeIsPassedIntervalSpanningMidnightBoundryReturns2400() {
 		final DateTime startTime = new DateTime(2015, 1, 1, 11, 10, 00, DateTimeZone.forID("US/Eastern"));
-		final DateTime endTime = new DateTime(2015, 1, 2, 12, 45, 59, DateTimeZone.forID("US/Eastern"));
+		final DateTime endTime = new DateTime(2015, 1, 1, 12, 45, 59, DateTimeZone.forID("US/Eastern"));
 
 		final Integer charge = sitter.calculateCharge(new Interval(startTime, endTime));
 
@@ -133,13 +135,21 @@ public class SitterTest {
 	}
 
 	@Test
-	public void whenCalculateIsPassedIntervalSpanningTwoPartialHourBeforeBedtimeReturns2400() {
+	public void whenCalculateChargeIsPassedIntervalSpanningTwoPartialHourBeforeBedtimeReturns2400() {
 		final DateTime startTime = new DateTime(2015, 1, 1, 17, 10, 00, DateTimeZone.forID("US/Eastern"));
 		final DateTime endTime = new DateTime(2015, 1, 1, 18, 45, 59, DateTimeZone.forID("US/Eastern"));
 
 		final Integer charge = sitter.calculateCharge(new Interval(startTime, endTime));
 
 		assertThat(charge, equalTo(2400));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void whenCalculateChargeIsPassedNullIntervalThrowException() {
+
+		sitter.calculateCharge(null);
+
+		fail("Should have seen IllegalArgumentException");
 	}
 
 }
